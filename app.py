@@ -60,7 +60,6 @@ if analysis_type == "Driver vs Driver":
         roll1 = laps1["LapTimeSec"].rolling(5, min_periods=1).std()
         roll2 = laps2["LapTimeSec"].rolling(5, min_periods=1).std()
 
-        # Create figure
         fig = go.Figure()
 
         fig.add_trace(go.Scatter(
