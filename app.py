@@ -45,10 +45,10 @@ if laps.empty:
     st.warning("No lap data found for this race. Please try another event.")
     st.stop()
 
+
 if analysis_type == "Driver vs Driver":
     drivers = laps["Driver"].unique().tolist()
     selected = st.sidebar.multiselect("Select up to two drivers", drivers)
-
     if len(selected) == 2:
         d1, d2 = selected
         laps1 = laps.pick_driver(d1)
@@ -62,8 +62,8 @@ if analysis_type == "Driver vs Driver":
 
         plt.style.use("seaborn-v0_8-darkgrid")
         plt.rcParams.update({
-            "figure.figsize": (12, 6),       # bigger figure
-            "figure.dpi": 100,               # good balance for Streamlit
+            "figure.figsize": (12, 6),
+            "figure.dpi": 100,
             "axes.labelsize": 12,
             "axes.titlesize": 14,
             "xtick.labelsize": 10,
@@ -71,28 +71,17 @@ if analysis_type == "Driver vs Driver":
             "legend.fontsize": 10,
         })
 
-fig, ax = plt.subplots()
+        fig, ax = plt.subplots()
+        ax.plot(laps1["LapNumber"], roll1, label=f"{d1} rolling std (5 laps)", linewidth=1.8)
+        ax.plot(laps2["LapNumber"], roll2, label=f"{d2} rolling std (5 laps)", linewidth=1.8)
+        ax.set_xlabel("Lap Number")
+        ax.set_ylabel("Rolling Standard Deviation (s)")
+        ax.set_title(f"Consistency Comparison: {d1} vs {d2} — {gp} {year}")
+        ax.legend()
 
-ax.plot(laps1["LapNumber"], roll1, label=f"{d1} rolling std (5 laps)", linewidth=1.8)
-ax.plot(laps2["LapNumber"], roll2, label=f"{d2} rolling std (5 laps)", linewidth=1.8)
-ax.set_xlabel("Lap Number")
-ax.set_ylabel("Rolling Standard Deviation (s)")
-ax.set_title(f"Consistency Comparison: {d1} vs {d2} — {gp} {year}")
-ax.legend()
+        st.pyplot(fig, clear_figure=True, use_container_width=True)
 
-st.pyplot(fig, clear_figure=True, use_container_width=True)
-        
-plt.figure(figsize=(10, 5), dpi=150) 
-plt.plot(laps1["LapNumber"], roll1, label=f"{d1} rolling std (5 laps)")
-plt.plot(laps2["LapNumber"], roll2, label=f"{d2} rolling std (5 laps)")
-plt.xlabel("Lap Number")
-plt.ylabel("Rolling Standard Deviation (s)")
-plt.title(f"Consistency Comparison: {d1} vs {d2} — {gp} {year}")
-plt.legend()
-st.pyplot(plt)
-
-elif len(selected) < 2:
-       st.info("Please select two drivers to compare.")
-else:
-       st.warning("You selected more than two drivers. Please choose exactly two.")
-
+    elif len(selected) < 2:
+        st.info("👆 Please select two drivers to compare.")
+    else:
+        st.warning("⚠️ You selected more than two drivers. Please choose exactly two.")
