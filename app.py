@@ -5,18 +5,16 @@ import matplotlib.pyplot as plt
 import tempfile  # to use Streamlit-safe temporary cache folder
 
 try:
-    fastf1.Cache.enable_cache(tempfile.gettempdir())  # Safe caching
-    st.success("FastF1 cache enabled successfully.")
+    fastf1.Cache.enable_cache(tempfile.gettempdir())  
 except Exception as e:
     st.warning("Could not enable FastF1 cache. Continuing without it.")
     st.write(e)
 
-st.title("🏎️ Formula 1 Data Dashboard")
+st.title("Formula 1 Data Dashboard")
 st.write("Analyse driver and team consistency with FastF1 data.")
 
 year = st.sidebar.selectbox("Select Year", [2023, 2024, 2025])
 
-# Try to load race schedule safely
 try:
     schedule = fastf1.get_event_schedule(year)
     gp_names = schedule["EventName"].tolist()
@@ -43,7 +41,6 @@ def load_laps(year, gp):
 
 laps = load_laps(year, gp)
 
-# Stop gracefully if no data
 if laps.empty:
     st.warning("No lap data found for this race. Please try another event.")
     st.stop()
@@ -57,11 +54,9 @@ if analysis_type == "Driver vs Driver":
         laps1 = laps.pick_driver(d1)
         laps2 = laps.pick_driver(d2)
 
-        # Convert lap times to seconds
         laps1["LapTimeSec"] = laps1["LapTime"].dt.total_seconds()
         laps2["LapTimeSec"] = laps2["LapTime"].dt.total_seconds()
 
-        # Rolling 5-lap std (consistency)
         roll1 = laps1["LapTimeSec"].rolling(5, min_periods=1).std()
         roll2 = laps2["LapTimeSec"].rolling(5, min_periods=1).std()
 
