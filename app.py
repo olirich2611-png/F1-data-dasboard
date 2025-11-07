@@ -62,13 +62,13 @@ if analysis_type == "Driver vs Driver":
 
         plt.style.use("seaborn-v0_8-darkgrid")
         plt.style.use("seaborn-v0_8-darkgrid")
-plt.rcParams.update({
-    "font.size": 11,
-    "axes.labelweight": "bold",
-    "axes.titlesize": 13,
-    "legend.fontsize": 10,
-    "figure.autolayout": True
-})
+        plt.rcParams.update({
+            "font.size": 11,
+            "axes.labelweight": "bold",
+            "axes.titlesize": 13,
+            "legend.fontsize": 10,
+            "figure.autolayout": True
+        })
 
         plt.figure(figsize=(10, 5), dpi=150) 
         plt.plot(laps1["LapNumber"], roll1, label=f"{d1} rolling std (5 laps)")
