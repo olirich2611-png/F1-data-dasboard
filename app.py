@@ -81,7 +81,7 @@ ax.set_title(f"Consistency Comparison: {d1} vs {d2} — {gp} {year}")
 ax.legend()
 
 st.pyplot(fig, clear_figure=True, use_container_width=True)
-        })
+        
 
         plt.figure(figsize=(10, 5), dpi=150) 
         plt.plot(laps1["LapNumber"], roll1, label=f"{d1} rolling std (5 laps)")
