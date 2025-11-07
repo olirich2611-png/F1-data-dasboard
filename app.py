@@ -12,7 +12,7 @@ except Exception as e:
 st.title ("F1 Data Dashboard")
 st.write ("Analyse and compare driver and teams using different metrics.")
 
-year= st.sidebar.selectbox("Select year",[2023,2024,2025]
+year= st.sidebar.selectbox("Select year",[2023,2024,2025])
 try:
     schedule=  fastf1.get_event_schedule(year)
     gp_names= schedule["EventName"].tolist()
