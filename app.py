@@ -47,7 +47,7 @@ if laps.empty:
 
 if analysis_type == "Driver vs Driver":
     drivers = laps["Driver"].unique().tolist()
-    selected = st.sidebar.multiselect("Select Two Drivers", drivers, max_selections=2)
+    selected = st.sidebar.multiselect("Select up to two drivers", drivers)
 
     if len(selected) == 2:
         d1, d2 = selected
@@ -62,3 +62,16 @@ if analysis_type == "Driver vs Driver":
 
         plt.style.use("seaborn-v0_8-darkgrid")
         plt.figure(figsize=(10, 5))
+        plt.plot(laps1["LapNumber"], roll1, label=f"{d1} rolling std (5 laps)")
+        plt.plot(laps2["LapNumber"], roll2, label=f"{d2} rolling std (5 laps)")
+        plt.xlabel("Lap Number")
+        plt.ylabel("Rolling Standard Deviation (s)")
+        plt.title(f"Consistency Comparison: {d1} vs {d2} — {gp} {year}")
+        plt.legend()
+        st.pyplot(plt)
+
+    elif len(selected) < 2:
+        st.info("Please select two drivers to compare.")
+    else:
+        st.warning("You selected more than two drivers. Please choose exactly two.")
+
