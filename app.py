@@ -79,7 +79,12 @@ if analysis_type == "Driver vs Driver":
         ax.set_title(f"Consistency Comparison: {d1} vs {d2} — {gp} {year}")
         ax.legend()
 
-        st.pyplot(fig, clear_figure=True, use_container_width=True)
+        import io
+        buf = io.BytesIO()
+        fig.savefig(buf, format="png", dpi=300, bbox_inches="tight") 
+        buf.seek(0)
+        st.image(buf, use_column_width=True)
+
 
     elif len(selected) < 2:
         st.info("👆 Please select two drivers to compare.")
