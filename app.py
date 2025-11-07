@@ -2,37 +2,78 @@ import streamlit as st
 import fastf1
 import pandas as pd
 import matplotlib.pyplot as plt
-fastf1.Cache.enable_cache(".cache")
-st.title("Formula 1 Data Analysis Dashboard")
 
+try:
+    fastf1.cache.enable_cache(".fastf1cache")
+except Exception as e:
+    st.warning("Couldn't enable fastf1 caching. Continuing without it.")
+    st.write(e)
 
-year = st.sidebar.selectbox("Select Year", [2023, 2024, 2025])
-event_schedule = fastf1.get_event_schedule(year)
-gp_names = event_schedule['EventName'].tolist()
-gp = st.sidebar.selectbox("Select Grand Prix", gp_names)
+st.title ("F1 Data Dashboard")
+st.write ("Analyse and compare driver and teams using different metrics.")
 
-@st.cache_data
-def load_race(year, gp):
-    session = fastf1.get_session(year, gp, 'R')
-    session.load()
-    return session
+year= st.sidebar.selectbox("Select year",[2023,2024,2025]
+try:
+    schedule=  fastf1.get_event_schedule(year)
+    gp_names= schedule["EventName"].tolist()
+except Exception:
+    gp_names= []
+gp= st.sidebar.selectbox("Select Grand Prix", gp_names if gp_names else ["Monaco Grand Prix"])
 
-session = load_race(year, gp)
+analysis_type= st.sidebar.radio(
+    "Select Analysis Type",
+    ["Driver vs Driver", "Single Driver Consistency"],
+)
 
-drivers = session.results['Driver'].unique()
-selected_drivers = st.sidebar.multiselect("Select Drivers", drivers, max_selections=2)
+@st.cache_data(show_spinner=True)
+def load_laps(year,gp):
+    try:
+        session= fastf1.get_session(year,gp,"R")
+        session.load()
+        return session.laps
+    except Exception as e:
+        st.error(f"Could not load race data: {e}")
+        return pd.DataFrame
 
-if len(selected_drivers) == 2:
-    df = session.laps
-    fig, ax = plt.subplots()
-    for driver in selected_drivers:
-        laps = df.pick_driver(driver)
-        lap_times = laps['LapTime'].dt.total_seconds()
-        ax.plot(laps['LapNumber'], lap_times, label=driver)
-    ax.set_xlabel('Lap Number')
-    ax.set_ylabel('Lap Time (s)')
-    ax.set_title(f'{selected_drivers[0]} vs {selected_drivers[1]} - {gp} {year}')
-    ax.legend()
-    st.pyplot(fig)
-else:
-    st.write("Please select two drivers to compare.")
+if analysis_type == "Driver vs Driver":
+    drivers= laps["Driver"].unique().tolist()
+    selected = st.sidebar.multiselect("Select Two Drivers", drivers, max_selections=2)
+
+    if len(selected) == 2:
+        d1, d2 = selected
+        laps1 = laps.pick_driver(d1)
+        laps2 = laps.pick_driver(d2)
+
+        laps1["LapTimeSec"] = laps1["LapTime"].dt.total_seconds()
+        laps2["LapTimeSec"] = laps2["LapTime"].dt.total_seconds()
+
+        roll1 = laps1["LapTimeSec"].rolling(5, min_periods=1).std()
+        roll2 = laps2["LapTimeSec"].rolling(5, min_periods=1).std()
+
+        plt.style.use("seaborn-v0_8-darkgrid")
+        plt.figure(figsize=(10, 5))
+        plt.plot(laps1["LapNumber"], roll1, label=f"{d1} rolling std (5 laps)")
+        plt.plot(laps2["LapNumber"], roll2, label=f"{d2} rolling std (5 laps)")
+        plt.xlabel("Lap Number")
+        plt.ylabel("Rolling Standard Deviation (s)")
+        plt.title(f"Consistency Comparison: {d1} vs {d2} — {gp} {year}")
+        plt.legend()
+        st.pyplot(plt)
+        
+if analysis_type == "Single Driver Consistency":
+    drivers = laps["Driver"].unique().tolist()
+    d = st.sidebar.selectbox("Select Driver", drivers)
+
+    laps_d = laps.pick_driver(d)
+    laps_d["LapTimeSec"] = laps_d["LapTime"].dt.total_seconds()
+
+    roll = laps_d["LapTimeSec"].rolling(5, min_periods=1).std()
+
+    plt.style.use("seaborn-v0_8-darkgrid")
+    plt.figure(figsize=(10, 5))
+    plt.plot(laps_d["LapNumber"], roll, label=f"{d} rolling std (5 laps)")
+    plt.xlabel("Lap Number")
+    plt.ylabel("Rolling Standard Deviation (s)")
+    plt.title(f"{d} Consistency — {gp} {year}")
+    plt.legend()
+    st.pyplot(plt)
