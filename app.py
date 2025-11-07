@@ -4,7 +4,8 @@ import pandas as pd
 import matplotlib.pyplot as plt
 
 try:
-    fastf1.cache.enable_cache(".fastf1cache")
+    import tempfile
+fastf1.Cache.enable_cache(tempfile.gettempdir())
 except Exception as e:
     st.warning("Couldn't enable fastf1 caching. Continuing without it.")
     st.write(e)
