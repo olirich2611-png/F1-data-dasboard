@@ -5,7 +5,7 @@ import matplotlib.pyplot as plt
 
 try:
     import tempfile
-fastf1.Cache.enable_cache(tempfile.gettempdir())
+    fastf1.Cache.enable_cache(tempfile.gettempdir())
 except Exception as e:
     st.warning("Couldn't enable fastf1 caching. Continuing without it.")
     st.write(e)
