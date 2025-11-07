@@ -61,13 +61,26 @@ if analysis_type == "Driver vs Driver":
         roll2 = laps2["LapTimeSec"].rolling(5, min_periods=1).std()
 
         plt.style.use("seaborn-v0_8-darkgrid")
-        plt.style.use("seaborn-v0_8-darkgrid")
         plt.rcParams.update({
-            "font.size": 11,
-            "axes.labelweight": "bold",
-            "axes.titlesize": 13,
+            "figure.figsize": (12, 6),       # bigger figure
+            "figure.dpi": 100,               # good balance for Streamlit
+            "axes.labelsize": 12,
+            "axes.titlesize": 14,
+            "xtick.labelsize": 10,
+            "ytick.labelsize": 10,
             "legend.fontsize": 10,
-            "figure.autolayout": True
+        })
+
+fig, ax = plt.subplots()
+
+ax.plot(laps1["LapNumber"], roll1, label=f"{d1} rolling std (5 laps)", linewidth=1.8)
+ax.plot(laps2["LapNumber"], roll2, label=f"{d2} rolling std (5 laps)", linewidth=1.8)
+ax.set_xlabel("Lap Number")
+ax.set_ylabel("Rolling Standard Deviation (s)")
+ax.set_title(f"Consistency Comparison: {d1} vs {d2} — {gp} {year}")
+ax.legend()
+
+st.pyplot(fig, clear_figure=True, use_container_width=True)
         })
 
         plt.figure(figsize=(10, 5), dpi=150) 
