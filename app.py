@@ -1,7 +1,7 @@
 import streamlit as st
 import fastf1
 import pandas as pd
-import matplotlib.pyplot as plt
+import plotly.graph_objects as go
 import tempfile  # to use Streamlit-safe temporary cache folder
 
 try:
@@ -59,31 +59,35 @@ if analysis_type == "Driver vs Driver":
 
         roll1 = laps1["LapTimeSec"].rolling(5, min_periods=1).std()
         roll2 = laps2["LapTimeSec"].rolling(5, min_periods=1).std()
+        
+        fig = go.Figure()
 
-        plt.style.use("seaborn-v0_8-darkgrid")
-        plt.rcParams.update({
-            "figure.figsize": (12, 6),
-            "figure.dpi": 100,
-            "axes.labelsize": 12,
-            "axes.titlesize": 14,
-            "xtick.labelsize": 10,
-            "ytick.labelsize": 10,
-            "legend.fontsize": 10,
-        })
+        fig.add_trace(go.Scatter(
+           x=laps1["LapNumber"],
+           y=roll1,
+           mode="lines",
+           name=f"{d1} rolling std (5 laps)"
+        ))
 
-        fig, ax = plt.subplots()
-        ax.plot(laps1["LapNumber"], roll1, label=f"{d1} rolling std (5 laps)", linewidth=1.8)
-        ax.plot(laps2["LapNumber"], roll2, label=f"{d2} rolling std (5 laps)", linewidth=1.8)
-        ax.set_xlabel("Lap Number")
-        ax.set_ylabel("Rolling Standard Deviation (s)")
-        ax.set_title(f"Consistency Comparison: {d1} vs {d2} — {gp} {year}")
-        ax.legend()
+        fig.add_trace(go.Scatter(
+          x=laps2["LapNumber"],
+          y=roll2,
+          mode="lines",
+          name=f"{d2} rolling std (5 laps)"
+       ))
 
-        import io
-        buf = io.BytesIO()
-        fig.savefig(buf, format="png", dpi=300, bbox_inches="tight") 
-        buf.seek(0)
-        st.image(buf, use_column_width=True)
+       fig.update_layout(
+         title=f"Consistency Comparison: {d1} vs {d2} — {gp} {year}",
+         xaxis_title="Lap Number",
+         yaxis_title="Rolling Standard Deviation (s)",
+         template="plotly_dark",          
+         legend_title="Driver",
+         width=1000,
+         height=500
+      )
+
+      st.plotly_chart(fig, use_container_width=True)
+
 
 
     elif len(selected) < 2:
