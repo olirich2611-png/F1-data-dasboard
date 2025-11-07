@@ -82,15 +82,14 @@ ax.legend()
 
 st.pyplot(fig, clear_figure=True, use_container_width=True)
         
-
-    plt.figure(figsize=(10, 5), dpi=150) 
-    plt.plot(laps1["LapNumber"], roll1, label=f"{d1} rolling std (5 laps)")
-    plt.plot(laps2["LapNumber"], roll2, label=f"{d2} rolling std (5 laps)")
-    plt.xlabel("Lap Number")
-    plt.ylabel("Rolling Standard Deviation (s)")
-    plt.title(f"Consistency Comparison: {d1} vs {d2} — {gp} {year}")
-    plt.legend()
-    st.pyplot(plt)
+plt.figure(figsize=(10, 5), dpi=150) 
+plt.plot(laps1["LapNumber"], roll1, label=f"{d1} rolling std (5 laps)")
+plt.plot(laps2["LapNumber"], roll2, label=f"{d2} rolling std (5 laps)")
+plt.xlabel("Lap Number")
+plt.ylabel("Rolling Standard Deviation (s)")
+plt.title(f"Consistency Comparison: {d1} vs {d2} — {gp} {year}")
+plt.legend()
+st.pyplot(plt)
 
     elif len(selected) < 2:
         st.info("Please select two drivers to compare.")
