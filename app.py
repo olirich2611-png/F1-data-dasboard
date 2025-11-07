@@ -61,7 +61,7 @@ if analysis_type == "Driver vs Driver":
         roll2 = laps2["LapTimeSec"].rolling(5, min_periods=1).std()
 
         plt.style.use("seaborn-v0_8-darkgrid")
-        plt.figure(figsize=(10, 5))
+        plt.figure(figsize=(10, 5), dpi=150) 
         plt.plot(laps1["LapNumber"], roll1, label=f"{d1} rolling std (5 laps)")
         plt.plot(laps2["LapNumber"], roll2, label=f"{d2} rolling std (5 laps)")
         plt.xlabel("Lap Number")
