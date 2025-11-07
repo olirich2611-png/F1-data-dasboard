@@ -84,13 +84,13 @@ if analysis_type == "Driver vs Driver":
          legend_title="Driver",
          width=1000,
          height=500
-      )
+       )
 
       st.plotly_chart(fig, use_container_width=True)
 
 
 
-    elif len(selected) < 2:
-        st.info("👆 Please select two drivers to compare.")
-    else:
-        st.warning("⚠️ You selected more than two drivers. Please choose exactly two.")
+      elif len(selected) < 2:
+          st.info("Please select two drivers to compare.")
+      else:
+          st.warning("You selected more than two drivers. Please choose exactly two.")
