@@ -91,8 +91,8 @@ plt.title(f"Consistency Comparison: {d1} vs {d2} — {gp} {year}")
 plt.legend()
 st.pyplot(plt)
 
-    elif len(selected) < 2:
-        st.info("Please select two drivers to compare.")
-    else:
-        st.warning("You selected more than two drivers. Please choose exactly two.")
+elif len(selected) < 2:
+       st.info("Please select two drivers to compare.")
+else:
+       st.warning("You selected more than two drivers. Please choose exactly two.")
 
